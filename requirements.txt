@@ -1,0 +1,7 @@
+# requirements.txt
+
+# Requests library for making HTTP requests
+requests==2.28.1
+
+# Geopy library for geocoding
+geopy==2.4.0
