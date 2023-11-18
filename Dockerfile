@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-ADD requirements.txt 
+ADD requirements.txt .
 RUN pip3 install -r requirements.txt
 
 WORKDIR src
