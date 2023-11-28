@@ -47,7 +47,7 @@ def tranform_movie(movie: list[dict]) -> pd.DataFrame:
         Returns:
             movie_df: The movie in a dataFrame.
     """
-    movie_df = pd.DataFrame(movie)
+    movie_df = pd.DataFrame(movie).to_json(orient='records')
     return movie_df
 
 
