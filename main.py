@@ -82,18 +82,18 @@ def get_genre():
     """
     # initialisations
     movies = get_movies('The Matrix')
-    genres = [movie['genre_ids'] for movie in movies]
+    genres_movies = [movie['genre_ids'] for movie in movies]
     genres_names = []
 
     # get the genre of the movie
-    for genre in genres:
-        genres = tmdb.Genres()
-        response = genres.movie_list()
+    for genres_movie in genres_movies:
+        genres_movies = tmdb.Genres()
+        response = genres_movies.movie_list()
 
         for g in response['genres']:
-            if g['id'] == genre:
-                genres_names.append(g['name'])
-
+            for genre in genres_movie:
+                if g['id'] == genre:
+                    genres_names.append(g['name'])
     # put the genres in a json
     genres_names = pd.DataFrame(genres_names).to_json(orient='records')
 
