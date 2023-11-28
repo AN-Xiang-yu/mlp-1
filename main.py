@@ -1,7 +1,8 @@
-
 # Installed packages
-import requests
 import pandas as pd
+import requests
+import uvicorn
+
 from fastapi import FastAPI
 
 
@@ -63,8 +64,4 @@ def read_root():
 
 if __name__ == '__main__':
     # use the api read_root
-    
-    
-    
-
-    
+    uvicorn.run(app, host="0.0.0.0", port=8000)
