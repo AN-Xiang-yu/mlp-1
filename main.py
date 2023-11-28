@@ -1,4 +1,5 @@
 # Installed packages
+import tmdbsimple as tmdb
 import pandas as pd
 import requests
 import uvicorn
@@ -10,8 +11,14 @@ from fastapi import FastAPI
 TMDB_KEY = '6cd475d6493bd4fb6ead9f2919db145a'
 URL_MOVIE = "https://api.themoviedb.org/3/search/movie"
 
+################## Global settings ##################
+tmdb.API_KEY = TMDB_KEY
 
-def get_movie(movie_title: str, year_released: str = None) -> list[dict]:
+
+################## Functions ##################
+
+
+def get_movies(movie_title: str, year_released: str = None) -> list[dict]:
     """Get the movie from the movie title.
         Args:
             movie_title: The title of the movie.
@@ -40,26 +47,57 @@ def get_movie(movie_title: str, year_released: str = None) -> list[dict]:
     return movie
 
 
-def tranform_movie(movie: list[dict]) -> pd.DataFrame:
-    """Transform the movie in a dataFrame.
-        Args:
-            movie: The movie from the movie title.
-        Returns:
-            movie_df: The movie in a dataFrame.
-    """
-    movie_df = pd.DataFrame(movie).to_json(orient='records')
-    return movie_df
-
-
 app = FastAPI()
 
 
-@app.get("/create_movie")
-def read_root():
-    movie = get_movie('The Matrix')
-    movie_tranformed = tranform_movie(movie)
+@app.get("/get_movies_review")
+def get_movies_review():
+    """Transform the movie in a dataFrame.
+        Args:
+            movie_title: The movie's title.
+        Returns:
+            movies' reviews: The movie reviews in a json.
+    """
+    # initialisation
+    movies = get_movies('The Matrix')
+    movies_reviews = []
 
-    return movie_tranformed
+    for movie in movies:
+        print(movie)
+        movies_reviews.append(movie["overview"])
+
+    # put the movies' reviews in a json
+    movies_reviews = pd.DataFrame(movies_reviews).to_json(orient='records')
+
+    return movies_reviews
+
+
+@app.get("/get_movies_genre")
+def get_genre():
+    """Get the genre of the movie.
+        Args:
+            movie: The movie from the movie title.
+        Returns:
+            genre: The genre of the movie.
+    """
+    # initialisations
+    movies = get_movies('The Matrix')
+    genres = [movie['genre_ids'] for movie in movies]
+    genres_names = []
+
+    # get the genre of the movie
+    for genre in genres:
+        genres = tmdb.Genres()
+        response = genres.movie_list()
+
+        for g in response['genres']:
+            if g['id'] == genre:
+                genres_names.append(g['name'])
+
+    # put the genres in a json
+    genres_names = pd.DataFrame(genres_names).to_json(orient='records')
+
+    return genres_names
 
 
 if __name__ == '__main__':
